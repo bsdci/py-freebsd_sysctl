@@ -28,6 +28,7 @@ import enum
 import freebsd_sysctl.libc
 import freebsd_sysctl.types
 import freebsd_sysctl.flags
+from freebsd_sysctl.__version__ import VERSION as __version__
 
 NULL_BYTES = b"\x00"
 CTL_MAXNAME = ctypes.c_uint(24)
