@@ -3,29 +3,10 @@
 import os
 import os.path
 from setuptools import find_packages, setup
-
-
-def read_first_line(relative_filename: str) -> str:
-    absolute_path = os.path.join(os.getcwd(), relative_filename)
-    with open(absolute_path, "r", encoding="UTF-8") as f:
-        return f.readline().strip()
-
-
-try:
-    VERSION = read_first_line("VERSION")
-except:
-    # last git commit SHA is the version
-    line = read_first_line(".git/HEAD")
-    if line.startswith("ref: ") is False:
-        VERSION = line
-    else:
-        ref = line[5:]
-        VERSION = read_first_line(f".git/{ref}")
-
+from freebsd_sysctl.__version__ import VERSION
 
 with open(os.path.join(cwd, "README.md"), encoding="utf-8") as f:
     long_description = f.read()
-
 
 setup(
     name="freebsd-sysctl",
