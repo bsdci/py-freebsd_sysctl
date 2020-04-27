@@ -5,7 +5,10 @@ import os.path
 from setuptools import find_packages, setup
 from freebsd_sysctl.__version__ import VERSION
 
-with open(os.path.join(cwd, "README.md"), encoding="utf-8") as f:
+with open(
+    os.path.join(os.path.dirname(__file__, "README.md")),
+    encoding="utf-8"
+) as f:
     long_description = f.read()
 
 setup(

@@ -2,15 +2,17 @@
 import os
 import os.path
 
+
 def read_first_line(relative_filename: str) -> str:
     __dirname = os.path.dirname(__file__)
     absolute_path = os.path.join(__dirname, "../", relative_filename)
     with open(absolute_path, "r", encoding="UTF-8") as f:
         return f.readline().strip()
 
+
 try:
     VERSION = read_first_line("VERSION")
-except:
+except Exception:
     # last git commit SHA is the version
     line = read_first_line(".git/HEAD")
     if line.startswith("ref: ") is False:
