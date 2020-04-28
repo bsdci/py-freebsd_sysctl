@@ -23,8 +23,11 @@ jobs:
         fetch-depth: 2
     - name: Verify 1 commit distance to master
       run: |
+        cat $GITHUB_EVENT_PATH
         BASE_SHA=$(python3 -c "import json; data=json.load(open('$GITHUB_EVENT_PATH', 'r', encoding='UTF-8')); print(data['pull_request']['base']['sha']);")
-        if [ $(git cherry $BASE_SHA | wc -l) -eq 1 ]; then echo OK; else echo "Only 1 commit allowed."; exit 1; fi
+        CHERRY_BASE=$(git cherry $BASE_SHA)
+        echo $CHERRY_BASE
+        if [ $(echo "$CHERRY_BASE" | wc -l) -eq 1 ]; then echo OK; else echo "Only 1 commit allowed."; exit 1; fi
     - uses: actions/setup-python@v1
     - name: Approve Release Pull-Request
       run: |
