@@ -68,7 +68,7 @@ with open(
 ) as f:
     long_description = f.read()
 
-setup(
+packages = find_packages(exclude=('tests',))
     name="freebsd-sysctl",
     version=__version__,
     description="Native Python wrapper for FreeBSD sysctls using libc.",
@@ -80,7 +80,8 @@ setup(
     python_requires=">=3.6",
     tests_require=["pytest-runner", "pytest"],
     include_package_data=True,
-    packages=find_packages(exclude=('tests',)),
+    packages=packages,
+    provides=packages,
     cmdclass=dict(
         build_py=BuildCommand,
         sdist=SdistCommand
