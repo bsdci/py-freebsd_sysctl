@@ -69,6 +69,8 @@ with open(
     long_description = f.read()
 
 packages = find_packages(exclude=('tests',))
+
+config = dict(
     name="freebsd-sysctl",
     version=__version__,
     description="Native Python wrapper for FreeBSD sysctls using libc.",
@@ -87,3 +89,6 @@ packages = find_packages(exclude=('tests',))
         sdist=SdistCommand
     )
 )
+
+if __name__ == "__main__":
+    setup(**config)
