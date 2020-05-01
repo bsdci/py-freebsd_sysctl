@@ -6,5 +6,3 @@ flake8-builtins
 flake8-mypy
 bandit==1.5.1
 bandit-high-entropy-string
-sphinx-autodoc-typehints
-sphinx_rtd_theme
