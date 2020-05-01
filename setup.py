@@ -2,25 +2,65 @@
 # -*- coding: utf-8 -*-
 import os
 import os.path
+from freebsd_sysctl.__version__ import __version__
 from setuptools import find_packages, setup
-from freebsd_sysctl.__version__ import VERSION
-from changelogmd import Changelog
+from distutils.command.build_py import build_py
+from distutils.command.sdist import sdist
+import distutils.log
 
 
-def _read_requirements(
-    filename: str="requirements.txt"
-) -> typing.Dict[str, typing.List[str]]:
-    reqs = list(parse_requirements(filename, session="ioc_cli"))
-    return dict(
-        install_requires=list(map(lambda x: f"{x.name}{x.specifier}", reqs)),
-        dependency_links=list(map(
-            lambda x: str(x.link),
-            filter(lambda x: x.link, reqs)
-        ))
-    )
+class BuildCommand(build_py):
+
+    def run(self):
+        super().run()
+
+        self.announce(
+            f"Tagging version {__version__}",
+            level=distutils.log.INFO
+        )
+        if not self.dry_run:
+            # generate .version files
+            for package in self.distribution.packages:
+                target = os.path.join(
+                    self.build_lib,
+                    package,
+                    ".version"
+                )
+                with open(target, "w", encoding="UTF-8") as f:
+                    f.write(__version__)
+                    f.truncate()
 
 
-_requirements = _read_requirements("requirements.txt")
+class SdistCommand(sdist):
+
+    def run(self):
+        self.announce(
+            f"Bundling Source Distribution of Release {__version__}",
+            level=distutils.log.INFO
+        )
+        created_release_files = set()
+
+        if not self.dry_run:
+            # generate temporary RELEASE files
+            for package in self.distribution.packages:
+                release_file = os.path.join(
+                    os.path.dirname(os.path.abspath(__file__)),
+                    package,
+                    ".version"
+                )
+                if os.path.isfile(release_file) is False:
+                    created_release_files.add(release_file)
+                    with open(release_file, "w", encoding="UTF-8") as f:
+                        f.write(__version__)
+                        f.truncate()
+        try:
+            pass
+            super().run()
+        finally:
+            if not self.dry_run:
+                for release_file in created_release_files:
+                    os.remove(release_file)
+
 
 with open(
     os.path.join(os.path.dirname(__file__), "README.md"),
@@ -30,7 +70,7 @@ with open(
 
 setup(
     name="freebsd-sysctl",
-    version=VERSION,
+    version=__version__,
     description="Native Python wrapper for FreeBSD sysctls using libc.",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -38,8 +78,11 @@ setup(
     author="Stefan Grönke",
     author_email="stefan@gronke.net",
     python_requires=">=3.6",
-    install_requires=_requirements["install_requires"],
-    dependency_links=_requirements["dependency_links"],
     tests_require=["pytest-runner", "pytest"],
-    packages=find_packages(exclude=('tests',))
+    include_package_data=True,
+    packages=find_packages(exclude=('tests',)),
+    cmdclass=dict(
+        build_py=BuildCommand,
+        sdist=SdistCommand
+    )
 )
