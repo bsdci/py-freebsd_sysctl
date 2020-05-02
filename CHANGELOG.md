@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.23.42] - 2020-05-01
+## [0.23.49] - 2020-05-03
 
 Note that we're bumping the version to 0.11.0, because we believe that the amount of automation we're putting into testing and releasing no longer justifies two zeros.
 
